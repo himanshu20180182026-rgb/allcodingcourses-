@@ -35,6 +35,7 @@
     const db   = getFirestore(app);
     const stor = getStorage(app);
     const auth = getAuth(app);
+    const withTimeout = (p, ms = 15000) => Promise.race([p, new Promise((_, rej) => setTimeout(() => rej(new Error('Timed out. Check internet, ad-blocker, or Firebase rules.')), ms))]);
 
     // ── DEFAULT COURSES ──
     const DEFAULT_COURSES = [];
@@ -352,7 +353,7 @@ const url = await F.getDownloadURL(snap.ref);
           btn.textContent = '🚀 Publish Course';
         } else {
           await addDoc(collection(db, 'courses'), data);
-          await logActivity('course_added', title);
+          logActivity('course_added', title);
           showToast('Course published! 🚀');
         }
         ['cTitle','cImage','cCreator'].forEach(id => document.getElementById(id).value = '');
@@ -393,6 +394,8 @@ function parseCSV(text) {
 function fixImageUrl(url) {
   if (!url) return '';
   url = url.trim();
+const g = url.match(/[?&]imgurl=([^&]+)/);
+if (g && /google\./.test(url)) { try { url = decodeURIComponent(g[1]); } catch(e) {} }
   const gd = url.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/)
           || url.match(/drive\.google\.com\/(?:open|uc)\?(?:[^#]*&)?id=([a-zA-Z0-9_-]+)/);
   if (gd) return `https://drive.google.com/thumbnail?id=${gd[1]}&sz=w1000`;
@@ -501,7 +504,7 @@ function fixImageUrl(url) {
       if (!file) return;
       try {
         const storRef = ref(stor, 'thumbnails/' + Date.now() + '_' + file.name);
-        const snap = await uploadBytes(storRef, file);
+        const snap = await withTimeout(uploadBytes(storRef, file), 20000);
         const url = await getDownloadURL(snap.ref);
         manualRows[i].image = url;
         renderManualTable();
@@ -611,7 +614,7 @@ function fixImageUrl(url) {
         if (fileInput && fileInput.files && fileInput.files[0]) {
           const file = fileInput.files[0];
           const storRef = ref(stor, 'upcoming/' + Date.now() + '_' + file.name);
-          const snap = await uploadBytes(storRef, file);
+          const snap = await withTimeout(uploadBytes(storRef, file), 20000);
           imageUrl = await getDownloadURL(snap.ref);
         }
         const data = { title, image: imageUrl, category: document.getElementById('uCat').value, creator: document.getElementById('uCreator').value.trim(), expectedDate: document.getElementById('uDate').value.trim(), createdAt: Date.now() };
@@ -2085,7 +2088,7 @@ function fixImageUrl(url) {
           zone.innerHTML = '<div style="font-size:1.5rem;">⏳</div><div style="font-size:.82rem;color:var(--muted);">Uploading…</div>';
           try {
             const storRef = ref(stor, 'thumbnails/' + Date.now() + '_paste.' + item.type.split('/')[1]);
-            const snap = await uploadBytes(storRef, file);
+            const snap = await withTimeout(uploadBytes(storRef, file), 20000);
             const url = await getDownloadURL(snap.ref);
             // put URL in the url input and show preview
             const urlInput = document.getElementById(urlInputId);
