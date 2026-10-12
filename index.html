@@ -11,7 +11,7 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
     import {
-      getFirestore, collection, addDoc, getDocs, deleteDoc,
+      getFirestore, initializeFirestore, collection, addDoc, getDocs, deleteDoc,
       doc, orderBy, query, updateDoc, setDoc, getDoc, serverTimestamp
     } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
     import {
@@ -32,7 +32,7 @@
   
 
     const app  = initializeApp(firebaseConfig);
-    const db   = getFirestore(app);
+    const db   = initializeFirestore(app, { experimentalForceLongPolling: true, useFetchStreams: false });
     const stor = getStorage(app);
     const auth = getAuth(app);
     const withTimeout = (p, ms = 15000) => Promise.race([p, new Promise((_, rej) => setTimeout(() => rej(new Error('Timed out. Check internet, ad-blocker, or Firebase rules.')), ms))]);
