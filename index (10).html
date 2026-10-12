@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>All Coding Courses</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0f0b1e;--card:#1a1433;--text:#ece8ff;--muted:#a79fd0;--accent:#8b5cf6;--accent2:#c084fc;--line:#2d2552}
+[data-theme=light]{--bg:#fffaf0;--card:#fff;--text:#2b2110;--muted:#7a6a4a;--accent:#d99a00;--accent2:#f0b429;--line:#eadfc4}
+[data-theme=blue]{--bg:#06142b;--card:#0c2347;--text:#e6f1ff;--muted:#8fb0d8;--accent:#3b82f6;--accent2:#60a5fa;--line:#17386a}
+[data-theme=green]{--bg:#08150e;--card:#0f2518;--text:#e5f5ea;--muted:#8fb99b;--accent:#22c55e;--accent2:#4ade80;--line:#1b3d29}
+[data-theme=orange]{--bg:#1a0d06;--card:#2a1609;--text:#fff0e6;--muted:#d1a58a;--accent:#f97316;--accent2:#fb923c;--line:#4a2810}
+[data-theme=rose]{--bg:#1a0810;--card:#2a0f1b;--text:#ffe9ef;--muted:#d49aae;--accent:#f43f5e;--accent2:#fb7185;--line:#4a1a2b}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:Poppins,system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
+a{color:inherit}
+.wrap{max-width:1100px;margin:auto;padding:0 20px}
+#banner{display:none;background:var(--accent);color:#fff;text-align:center;padding:8px 40px;position:relative;font-size:14px}
+#banner button{position:absolute;right:12px;top:6px;background:none;border:0;color:#fff;font-size:18px;cursor:pointer}
+nav{position:sticky;top:0;z-index:20;background:var(--bg);border-bottom:1px solid var(--line)}
+nav .wrap{display:flex;align-items:center;justify-content:space-between;height:60px;gap:10px}
+.logo{font-weight:800;text-decoration:none}
+.logo b{background:var(--accent);color:#fff;border-radius:6px;padding:2px 7px;margin-right:6px}
+.btn{background:var(--accent);color:#fff;border:0;border-radius:10px;padding:10px 18px;font:600 14px Poppins,sans-serif;cursor:pointer;text-decoration:none;display:inline-block}
+.btn.ghost{background:transparent;border:1px solid var(--line);color:var(--text)}
+.icon{background:transparent;border:1px solid var(--line);color:var(--text);border-radius:10px;width:40px;height:40px;cursor:pointer;font-size:16px}
+.hero{padding:70px 0 40px;text-align:center}
+.hero h1{font-size:clamp(32px,6vw,58px);font-weight:800;line-height:1.1}
+.hero h1 em{color:var(--accent2);font-style:normal}
+.hero p{color:var(--muted);margin:14px auto 24px;max-width:520px}
+.count{font-size:36px;font-weight:800;color:var(--accent2)}
+.video{max-width:720px;margin:30px auto 0;aspect-ratio:16/9;border-radius:16px;overflow:hidden;border:1px solid var(--line)}
+.video iframe{width:100%;height:100%;border:0}
+section{padding:46px 0}
+h2{font-size:28px;margin-bottom:18px}
+.tools{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px}
+input,select,textarea{background:var(--card);color:var(--text);border:1px solid var(--line);border-radius:10px;padding:11px 13px;font:14px Poppins,sans-serif;width:100%}
+.tools input{flex:1;min-width:200px;width:auto}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+.chip{background:var(--card);border:1px solid var(--line);color:var(--muted);border-radius:99px;padding:6px 14px;font:13px Poppins,sans-serif;cursor:pointer}
+.chip.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:18px}
+.course{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;display:flex;flex-direction:column}
+.course img{width:100%;aspect-ratio:16/9;object-fit:cover;background:var(--line)}
+.course div{padding:14px;display:flex;flex-direction:column;gap:6px;flex:1}
+.course h3{font-size:16px;line-height:1.3}
+.course small{color:var(--muted)}
+.course .btn{margin-top:auto;text-align:center}
+.empty{color:var(--muted)}
+form.req{max-width:520px;display:grid;gap:12px}
+label{font-size:13px;color:var(--muted)}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px}
+.card .em{font-size:28px}
+.soon{font-size:12px;color:var(--accent2)}
+footer{border-top:1px solid var(--line);padding:30px 0;color:var(--muted);font-size:14px;text-align:center}
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:50;align-items:center;justify-content:center;padding:16px;overflow:auto}
+.modal.open{display:flex}
+.box{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:24px;width:100%;max-width:440px;position:relative;display:grid;gap:12px}
+.box.big{max-width:760px;max-height:90vh;overflow:auto}
+.x{position:absolute;right:12px;top:8px;background:none;border:0;color:var(--text);font-size:22px;cursor:pointer}
+.themes{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px;border:1px solid var(--line);border-radius:10px;padding:8px 12px;font-size:14px}
+.row button{background:#e11d48;color:#fff;border:0;border-radius:8px;padding:5px 10px;cursor:pointer}
+.tabs{display:flex;gap:8px;flex-wrap:wrap}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--accent);color:#fff;padding:10px 18px;border-radius:10px;z-index:99;display:none}
+:focus-visible{outline:2px solid var(--accent2);outline-offset:2px}
+</style>
+</head>
+<body>
+
+<div id="banner"><span id="bannerText"></span><button onclick="this.parentNode.style.display='none'" aria-label="Close">&times;</button></div>
+
+<nav><div class="wrap">
+  <a class="logo" href="#"><b>ACC</b>All Coding Courses</a>
+  <div style="display:flex;gap:8px;align-items:center">
+    <button class="icon" onclick="openM('themeM')" aria-label="Theme">🎨</button>
+    <a class="btn" id="navTg" href="#req">Request Courses</a>
+  </div>
+</div></nav>
+
+<header class="hero wrap">
+  <h1>Master your skills, <em>absolutely free.</em></h1>
+  <p>Premium courses, zero cost. Learn from the best without paying a rupee.</p>
+  <div class="count" id="count">0</div>
+  <div style="color:var(--muted)">Free courses &amp; growing</div>
+  <div class="video"><iframe src="https://www.youtube.com/embed/S1NM2gKHKqY" allowfullscreen title="Intro"></iframe></div>
+</header>
+
+<section id="courses"><div class="wrap">
+  <h2>Course Library</h2>
+  <div class="tools"><input id="q" placeholder="Search courses..." oninput="render()"></div>
+  <div class="chips" id="chips"></div>
+  <div class="grid" id="grid"><p class="empty">Loading…</p></div>
+</div></section>
+
+<section id="upcomingS" style="display:none"><div class="wrap">
+  <h2>Upcoming Courses</h2>
+  <div class="grid" id="upGrid"></div>
+</div></section>
+
+<section id="req"><div class="wrap">
+  <h2>Can't find what you're looking for?</h2>
+  <p style="color:var(--muted);margin-bottom:16px">Request a course and we'll try to add it to the library.</p>
+  <form class="req" onsubmit="sendReq(event)">
+    <div><label>Your name (optional)</label><input id="rn"></div>
+    <div><label>Course name *</label><input id="rc" required></div>
+    <div><label>Additional note (optional)</label><textarea id="rt" rows="3"></textarea></div>
+    <button class="btn" type="submit">Send request</button>
+  </form>
+</div></section>
+
+<section><div class="wrap">
+  <h2>Our Community</h2>
+  <div class="cards">
+    <div class="card"><div class="em">💬</div><h3>Telegram Channel</h3><p style="color:var(--muted);margin:6px 0 12px">Get instant updates on new course drops.</p><a class="btn" id="tgCard" href="#">Join channel</a></div>
+    <div class="card"><div class="em">✅</div><h3>Habit Tracker</h3><p style="color:var(--muted)">Track daily learning habits.</p><span class="soon">Coming soon</span></div>
+    <div class="card"><div class="em">🏆</div><h3>Leaderboard</h3><p style="color:var(--muted)">See who's learning the most.</p><span class="soon">Coming soon</span></div>
+    <div class="card"><div class="em">📝</div><h3>Study Notes</h3><p style="color:var(--muted)">Share and discover notes.</p><span class="soon">Coming soon</span></div>
+  </div>
+</div></section>
+
+<section><div class="wrap" style="max-width:720px">
+  <h2>About</h2>
+  <p>We believe that <b>world-class education should never be gated behind a price tag.</b> All Coding Courses exists to make premium course content accessible to every student, whatever their financial situation.</p>
+  <p style="margin-top:10px">Learn freely. Grow endlessly.</p>
+</div></section>
+
+<footer><div class="wrap">
+  © 2026 <b>All Coding Courses</b>. Made with care for learners everywhere.<br>
+  <a href="#courses">All courses</a> · <a href="#" id="adminLink" onclick="openM('loginM');return false">Admin</a>
+</div></footer>
+
+<!-- Theme -->
+<div class="modal" id="themeM"><div class="box"><button class="x" onclick="closeM('themeM')">&times;</button>
+  <h3>Choose theme</h3>
+  <div class="themes">
+    <button class="btn ghost" onclick="setTheme('')">🌙 Dark Purple</button>
+    <button class="btn ghost" onclick="setTheme('light')">☀️ Light Warm</button>
+    <button class="btn ghost" onclick="setTheme('blue')">🌊 Midnight Blue</button>
+    <button class="btn ghost" onclick="setTheme('green')">🌲 Forest Green</button>
+    <button class="btn ghost" onclick="setTheme('orange')">🌅 Sunset Orange</button>
+    <button class="btn ghost" onclick="setTheme('rose')">🌸 Rose Pink</button>
+  </div>
+</div></div>
+
+<!-- Login -->
+<div class="modal" id="loginM"><div class="box"><button class="x" onclick="closeM('loginM')">&times;</button>
+  <h3>🔐 Admin access</h3>
+  <input id="le" type="email" placeholder="Email">
+  <input id="lp" type="password" placeholder="Password">
+  <button class="btn" onclick="login()">Sign in</button>
+</div></div>
+
+<!-- Admin -->
+<div class="modal" id="adminM"><div class="box big"><button class="x" onclick="closeM('adminM')">&times;</button>
+  <h3>⚙️ Admin dashboard</h3>
+  <div class="tabs">
+    <button class="chip on" onclick="tab('tAdd',this)">➕ Add</button>
+    <button class="chip" onclick="tab('tList',this)">📋 Courses</button>
+    <button class="chip" onclick="tab('tUp',this)">🔜 Upcoming</button>
+    <button class="chip" onclick="tab('tReq',this)">📩 Requests</button>
+    <button class="chip" onclick="tab('tSet',this)">📢 Settings</button>
+  </div>
+  <div id="tAdd" class="tp" style="display:grid;gap:10px">
+    <input id="ct" placeholder="Course title *">
+    <input id="ci" placeholder="Thumbnail image URL">
+    <input id="cl" placeholder="Join link *">
+    <select id="cc"><option>Development</option><option>AI / ML</option><option>Design</option><option>Data Science</option><option>DSA</option><option>Marketing</option><option>Business</option><option>Video Editing</option><option>Finance</option><option>Language</option></select>
+    <input id="cr" placeholder="Institution / creator">
+    <button class="btn" onclick="addCourse()">🚀 Publish course</button>
+  </div>
+  <div id="tList" class="tp" style="display:none;gap:8px"></div>
+  <div id="tUp" class="tp" style="display:none;gap:10px">
+    <input id="ut" placeholder="Upcoming course title *">
+    <input id="ui" placeholder="Thumbnail image URL">
+    <input id="ud" placeholder="Expected date (optional)">
+    <button class="btn" onclick="addUp()">🔜 Add upcoming</button>
+    <div id="upList" style="display:grid;gap:8px"></div>
+  </div>
+  <div id="tReq" class="tp" style="display:none;gap:8px"></div>
+  <div id="tSet" class="tp" style="display:none;gap:10px">
+    <input id="sTg" placeholder="Telegram username (without @)">
+    <input id="sBan" placeholder="Announcement text (empty = hide)">
+    <button class="btn" onclick="saveSettings()">💾 Save settings</button>
+    <button class="btn ghost" onclick="logout()">🚪 Sign out</button>
+  </div>
+</div></div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+/* ===== 1. PASTE YOUR FIREBASE CONFIG HERE (Firebase Console > Project settings > Your apps) ===== */
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_PROJECT.appspot.com",
+  messagingSenderId: "000000000",
+  appId: "YOUR_APP_ID"
+};
+const DEFAULT_TG = "your_telegram_username";
+/* ================================================================================================ */
+
+const configured = firebaseConfig.apiKey !== "YOUR_API_KEY";
+let db = null, auth = null;
+if (configured) { firebase.initializeApp(firebaseConfig); db = firebase.firestore(); auth = firebase.auth(); }
+
+let courses = [], upcoming = [], cat = "All", tg = DEFAULT_TG;
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const openM = id => $(id).classList.add("open");
+const closeM = id => $(id).classList.remove("open");
+function toast(m){const t=$("toast");t.textContent=m;t.style.display="block";setTimeout(()=>t.style.display="none",2500)}
+
+/* Theme */
+function setTheme(t){document.documentElement.dataset.theme=t;try{localStorage.setItem("acc-theme",t)}catch(e){};closeM("themeM")}
+try{document.documentElement.dataset.theme=localStorage.getItem("acc-theme")||""}catch(e){}
+
+/* Telegram links */
+function tgLinks(){const u=tg.startsWith("http")?tg:"https://t.me/"+tg;$("tgCard").href=u;$("navTg").href="#req"}
+
+/* Render */
+function render(){
+  $("count").textContent = courses.length;
+  const cats = ["All", ...new Set(courses.map(c=>c.category).filter(Boolean))];
+  $("chips").innerHTML = cats.map(c=>`<button class="chip ${c===cat?"on":""}" onclick="cat='${esc(c)}';render()">${esc(c)}</button>`).join("");
+  const q = $("q").value.toLowerCase();
+  const list = courses.filter(c => (cat==="All"||c.category===cat) && (c.title||"").toLowerCase().includes(q));
+  $("grid").innerHTML = list.length ? list.map(c=>`
+    <article class="course">
+      <img src="${esc(c.image)}" alt="" loading="lazy" onerror="this.style.visibility='hidden'">
+      <div><small>${esc(c.category)}</small><h3>${esc(c.title)}</h3><small>${esc(c.creator)}</small>
+      <a class="btn" href="${esc(c.link)}" target="_blank" rel="noopener">🚀 Join for free</a></div>
+    </article>`).join("") : `<p class="empty">No courses found.</p>`;
+  $("upcomingS").style.display = upcoming.length ? "block" : "none";
+  $("upGrid").innerHTML = upcoming.map(c=>`
+    <article class="course"><img src="${esc(c.image)}" alt="" onerror="this.style.visibility='hidden'">
+    <div><h3>${esc(c.title)}</h3><small>${esc(c.date||"Coming soon")}</small></div></article>`).join("");
+}
+
+/* Load data */
+const DEMO = [
+  {id:"d1",title:"Sample Course – Web Development",image:"",link:"#",category:"Development",creator:"Demo"},
+  {id:"d2",title:"Sample Course – DSA Basics",image:"",link:"#",category:"DSA",creator:"Demo"}
+];
+function load(){
+  if(!configured){ courses = DEMO; render(); tgLinks(); return; }
+  db.collection("courses").orderBy("createdAt","desc").onSnapshot(s=>{courses=s.docs.map(d=>({id:d.id,...d.data()}));render();renderAdminLists()},e=>{console.error(e);courses=DEMO;render()});
+  db.collection("upcoming").onSnapshot(s=>{upcoming=s.docs.map(d=>({id:d.id,...d.data()}));render();renderAdminLists()});
+  db.collection("settings").doc("site").onSnapshot(d=>{
+    const s=d.data()||{}; tg=s.telegram||DEFAULT_TG; tgLinks();
+    $("sTg").value=s.telegram||""; $("sBan").value=s.banner||"";
+    $("banner").style.display=s.banner?"block":"none"; $("bannerText").textContent=s.banner||"";
+  });
+}
+
+/* Course request */
+async function sendReq(e){
+  e.preventDefault();
+  const r={name:$("rn").value.trim(),course:$("rc").value.trim(),note:$("rt").value.trim(),createdAt:Date.now()};
+  if(configured){ try{await db.collection("requests").add(r);toast("Request sent ✅");e.target.reset();return}catch(err){console.error(err)} }
+  const u=(tg.startsWith("http")?tg:"https://t.me/"+tg);
+  window.open(u,"_blank"); toast("Opening Telegram…");
+}
+
+/* Admin */
+function tab(id,btn){document.querySelectorAll(".tp").forEach(e=>e.style.display="none");$(id).style.display="grid";document.querySelectorAll(".tabs .chip").forEach(c=>c.classList.remove("on"));btn.classList.add("on")}
+async function login(){
+  if(!configured) return toast("Add your Firebase config first");
+  try{await auth.signInWithEmailAndPassword($("le").value,$("lp").value);closeM("loginM");openM("adminM");renderAdminLists()}
+  catch(e){toast("Login failed: "+e.code)}
+}
+function logout(){auth&&auth.signOut();closeM("adminM");toast("Signed out")}
+async function addCourse(){
+  const t=$("ct").value.trim(),l=$("cl").value.trim();
+  if(!t||!l) return toast("Title and link are required");
+  await db.collection("courses").add({title:t,image:$("ci").value.trim(),link:l,category:$("cc").value,creator:$("cr").value.trim(),createdAt:Date.now()});
+  ["ct","ci","cl","cr"].forEach(i=>$(i).value="");toast("Published ✅");
+}
+async function addUp(){
+  const t=$("ut").value.trim(); if(!t) return toast("Title is required");
+  await db.collection("upcoming").add({title:t,image:$("ui").value.trim(),date:$("ud").value.trim()});
+  ["ut","ui","ud"].forEach(i=>$(i).value="");toast("Added ✅");
+}
+async function del(col,id){ if(confirm("Delete this item?")) await db.collection(col).doc(id).delete() }
+async function saveSettings(){
+  await db.collection("settings").doc("site").set({telegram:$("sTg").value.trim(),banner:$("sBan").value.trim()},{merge:true});toast("Saved ✅");
+}
+async function renderAdminLists(){
+  if(!configured) return;
+  $("tList").innerHTML=courses.map(c=>`<div class="row"><span>${esc(c.title)}</span><button onclick="del('courses','${c.id}')">Delete</button></div>`).join("")||"<p class='empty'>No courses yet.</p>";
+  $("upList").innerHTML=upcoming.map(c=>`<div class="row"><span>${esc(c.title)}</span><button onclick="del('upcoming','${c.id}')">Delete</button></div>`).join("");
+  try{
+    const s=await db.collection("requests").orderBy("createdAt","desc").limit(50).get();
+    $("tReq").innerHTML=s.docs.map(d=>{const r=d.data();return `<div class="row"><span><b>${esc(r.course)}</b><br><small>${esc(r.name||"Anonymous")} — ${esc(r.note)}</small></span><button onclick="del('requests','${d.id}').then(renderAdminLists)">Delete</button></div>`}).join("")||"<p class='empty'>No requests yet.</p>";
+  }catch(e){}
+}
+
+load();
+</script>
+</body>
+</html>
