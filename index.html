@@ -338,9 +338,10 @@
         const fileInput = document.getElementById('cImageFile');
         if (fileInput && fileInput.files && fileInput.files[0]) {
           const file = fileInput.files[0];
-          const storRef = ref(stor, 'thumbnails/' + Date.now() + '_' + file.name);
-          const snap = await uploadBytes(storRef, file);
-          imageUrl = await getDownloadURL(snap.ref);
+        const F = window._fb;
+const storRef = F.ref(F.stor, 'thumbnails/' + Date.now() + '_paste.' + item.type.split('/')[1]);
+const snap = await F.uploadBytes(storRef, file);
+const url = await F.getDownloadURL(snap.ref);
         }
         const data = { title, image: imageUrl, link, category: getCategory('cCat','cCustomCat'), creator: document.getElementById('cCreator').value.trim(), createdAt: Date.now() };
         if (editingCourseId && !editingCourseId.startsWith('default_')) {
@@ -370,37 +371,35 @@
 
     // ── BULK IMPORT via Google Sheets ──
     // Parse CSV properly handling quoted fields with commas inside
-    function parseCSV(text) {
-      const rows = [];
-      const lines = text.trim().split(/\r?\n/);
-      for (const line of lines) {
-        const cols = [];
-        let cur = '', inQ = false;
-        for (let i = 0; i < line.length; i++) {
-          const ch = line[i];
-          if (ch === '"') { inQ = !inQ; }
-          else if (ch === ',' && !inQ) { cols.push(cur.trim()); cur = ''; }
-          else { cur += ch; }
-        }
-        cols.push(cur.trim());
-        rows.push(cols);
-      }
-      return rows;
-    }
+function parseCSV(text) {
+  const rows = []; let row = [], cur = '', inQ = false;
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
+    if (inQ) {
+      if (ch === '"') { if (text[i+1] === '"') { cur += '"'; i++; } else inQ = false; }
+      else cur += ch;
+    } else if (ch === '"') inQ = true;
+    else if (ch === ',') { row.push(cur.trim()); cur = ''; }
+    else if (ch === '\n' || ch === '\r') {
+      if (ch === '\r' && text[i+1] === '\n') i++;
+      row.push(cur.trim()); rows.push(row); row = []; cur = '';
+    } else cur += ch;
+  }
+  if (cur || row.length) { row.push(cur.trim()); rows.push(row); }
+  return rows.filter(r => r.some(c => c));
+}
 
     // Fix image URL - handle Google Drive, direct URLs etc
-    function fixImageUrl(url) {
-      if (!url) return '';
-      url = url.trim();
-      // Google Drive share link → direct
-      const gdMatch = url.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/);
-      if (gdMatch) return `https://drive.google.com/uc?export=view&id=${gdMatch[1]}`;
-      // Google Drive open link
-      const gdMatch2 = url.match(/drive\.google\.com\/open\?id=([a-zA-Z0-9_-]+)/);
-      if (gdMatch2) return `https://drive.google.com/uc?export=view&id=${gdMatch2[1]}`;
-      // Already a direct image URL
-      return url;
-    }
+function fixImageUrl(url) {
+  if (!url) return '';
+  url = url.trim();
+  const gd = url.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/)
+          || url.match(/drive\.google\.com\/(?:open|uc)\?(?:[^#]*&)?id=([a-zA-Z0-9_-]+)/);
+  if (gd) return `https://drive.google.com/thumbnail?id=${gd[1]}&sz=w1000`;
+  const im = url.match(/^https?:\/\/(?:www\.)?imgur\.com\/(?!a\/|gallery\/)([a-zA-Z0-9]+)$/);
+  if (im) return `https://i.imgur.com/${im[1]}.jpg`;
+  return url;
+}
 
     window.bulkImportFromSheet = async function() {
       const sheetUrl = document.getElementById('sheetUrl').value.trim();
@@ -411,7 +410,7 @@
       // Try gid param for specific sheet tab
       const gidMatch = sheetUrl.match(/[#&]gid=(\d+)/);
       const gid = gidMatch ? gidMatch[1] : '0';
-      const csvUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv&gid=${gid}`;
+      const csvUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&gid=${gid}`;
       const btn = document.getElementById('bulkImportBtn');
       btn.textContent = 'Importing…'; btn.disabled = true;
       const statusEl = document.getElementById('bulkImportStatus');
@@ -2109,7 +2108,7 @@
       const urlPanel   = document.getElementById(prefix + 'ImgUrlPanel');
       const filePanel  = document.getElementById(prefix + 'ImgFilePanel');
       const pastePanel = document.getElementById(prefix + 'ImgPastePanel');
-      const tabs = urlPanel.parentElement.previousElementSibling.querySelectorAll('.img-tab');
+      const tabs = urlPanel.parentElement.querySelectorAll('.img-tab');
       tabs[0].classList.toggle('active', type === 'url');
       tabs[1].classList.toggle('active', type === 'file');
       if (tabs[2]) tabs[2].classList.toggle('active', type === 'paste');
